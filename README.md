@@ -24,6 +24,7 @@ This document describes a password-based mutual authentication protocol. It prov
 Strengths:
 * The client never has to share their password with the server.
 * The client authenticates the server before authenticating itself.
+
 Limitations:
 * The client has to send a hash of their password to the server during registration.
 
