@@ -1,8 +1,11 @@
 # SPBMAP - a Simple Password-Based Mutual Authentication Protocol
 
  - [Overview](#overview)
-     - [Registration](#overview-registration)
-     - [Authentication](#overview-authentication)
+     - [Comparisons to other protocols](#overview-comparisons)
+     - [Strengths and limitations](#overview-analysis)
+ - [Outline](#outline)
+     - [Registration](#outline-registration)
+     - [Authentication](#outline-authentication)
  - [Definitions](#definitions)
  - [Specification](#specification)
      - [Registration](#specification-registration)
@@ -12,10 +15,23 @@
      - [Test vector 1](#testvectors-1)
 
 # <a name="overview"> Overview
-This section provides a rough overview over how this protocol functions. The sections
+This document describes a password-based mutual authentication protocol. It provides a way for both the client and the server to authenticate each other and the protocol is relatively simple to implement.
+
+### <a name="overview-comparisons"> Comparisons to other protocols
+* **SCRAM**: [SCRAM](https://www.rfc-editor.org/rfc/rfc5802) is a similar protocol but it is a bit more complex. It conforms to both the [SASL](https://www.rfc-editor.org/rfc/rfc4422) and the [GSS-API](https://www.rfc-editor.org/rfc/rfc2743) standards which adds extra complexity and limitations on implementations. SCRAM also authenticates the client first and then authenticates the server whereas SPBMAP authenticates the server first and then the client. The authentication step is also a bit longer for SCRAM than for SPBMAP with 4 messages as compared to 3.
+
+### <a name="overview-analysis"> Strengths and limitations
+Strengths:
+* The client never has to share their password with the server.
+* The client authenticates the server before authenticating itself.
+Limitations:
+* The client has to send a hash of their password to the server during registration.
+
+# <a name="outline"> Protocol outline
+This section provides a rough outline of how this protocol functions. The sections
 [Definitions](#definitions) and [Specification](#specification) describes the protocol in further detail.
 
-### <a name="overview-registration"> Registration
+### <a name="outline-registration"> Registration
 The registration step consists of only one message: a request from the client.
 
 * The client calculates hashes of their id and password using a salt and then sends their id, hashed id, and hashed password to the server.
@@ -30,7 +46,7 @@ Depiction of the information flow:
    -------------------------------------------------
 ~~~
 
-### <a name="overview-authentication"> Authentication
+### <a name="outline-authentication"> Authentication
 The authentication step consists of three messages: a request from the client, a response from the server that establishes mutual
 challenges and provides the server response to this challenge, and lastly a response to this challenge from the client.
 
@@ -129,13 +145,13 @@ This section describes how registration and authentication errors should be hand
 
 * **Error A**: The server responds with the same message as for a successful request.
 * **Error B**: The server responds in a way indistinguishable from the response to a successful
-request, with incorrect [server_password_salt] and
-[server_signature] instead of the correct values. The incorrect server signature should be randomly
+request, with incorrect `server_password_salt` and
+`server_signature` instead of the correct values. The incorrect server signature should be randomly
 generated. The incorrect salt must be unique but consistent for the
-inputs, i.e. every call with an [id] and [hashed_id] must yield
-a different [server_password_salt] from calls with any other [id] or
-[hashed_id] but the same [server_password_salt] as previous and subsequent
-calls with the same [id] and [hashed_id].
+inputs, i.e. every call with an `id` and `hashed_id` must yield
+a different `server_password_salt` from calls with any other `id` or
+`hashed_id` but the same `server_password_salt` as previous and subsequent
+calls with the same `id` and `hashed_id`.
 * **Error C**: The client aborts the connection.
 * **Error D**: The server aborts the connection.
 
@@ -162,9 +178,9 @@ Parameters:
 * `server_nonce := "server_nonce"`
 
 Derived values:
-* `hashed_id = "f342012bfeac5cadb51b6abc2e43eea78ccca38fef489c79af6df4f745f86d50"`
-* `hashed_password = "52bed9a45da1514a8df363e155fba142ff98e748df8c3e308998b3183d72a6c6"`
-* `double_hashed_id = "ec003d5df24596c6b4a9dc120d35656a8f2b7b75f1f47b6f80d81a59f87fd3d4"`
-* `double_hashed_password = "684895f46d22bb595cc7da0ff2b410f355bbb7ce4cdafd68522dd17932a7d847"`
-* `client_signature = "2faf6c24e060e3021c700b5fdbe7df6d4d508088048c8a23a9b028a1b263ce78"`
-* `server_signature = "d7f3726a2ec3721093c9eef5f14e777512e99080b3b0f62c1af56ad1f228edf8"`
+* `hashed_id = 0xf342012bfeac5cadb51b6abc2e43eea78ccca38fef489c79af6df4f745f86d50`
+* `hashed_password = 0x52bed9a45da1514a8df363e155fba142ff98e748df8c3e308998b3183d72a6c6`
+* `double_hashed_id = 0xec003d5df24596c6b4a9dc120d35656a8f2b7b75f1f47b6f80d81a59f87fd3d4`
+* `double_hashed_password = 0x684895f46d22bb595cc7da0ff2b410f355bbb7ce4cdafd68522dd17932a7d847`
+* `client_signature = 0x2faf6c24e060e3021c700b5fdbe7df6d4d508088048c8a23a9b028a1b263ce78`
+* `server_signature = 0xd7f3726a2ec3721093c9eef5f14e777512e99080b3b0f62c1af56ad1f228edf8`
