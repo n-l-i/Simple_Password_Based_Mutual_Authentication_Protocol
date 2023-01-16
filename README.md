@@ -9,6 +9,7 @@
      - [Authentication](#specification-authentication)
  - [Implementation considerations](#implementation)
  - [Test vectors](#testvectors)
+     - [Test vector 1](#testvectors-1)
 
 # <a name="overview"> Overview
 This section provides a rough overview over how this protocol functions. The sections
@@ -74,13 +75,15 @@ There are a number of functions and values used in this protocol. These are defi
 ### Derived values:
 * `hashed_id := H_client(id,HMAC(client_salt,"id salt"))`
 * `hashed_password := H_client(password,HMAC(client_salt,"password salt"))`
-* `double_hashed_id := H_server(hashed_password,server_id_salt)`
+* `double_hashed_id := H_server(hashed_id,server_id_salt)`
 * `double_hashed_password := H_server(hashed_password,server_password_salt)`
 * `client_signature := HMAC(HMAC(double_hashed_password,client_nonce),server_nonce)`
 * `server_signature := HMAC(HMAC(double_hashed_password,server_nonce),client_nonce)`
 
 ### Data formats:
 * All byte string values are encoded as hexadecimal strings. Text string values are first encoded in UTF-8.
+* If a string is shorter than 64 bytes, the string is prefixed with zeroes to make it 64 bytes long.
+* If a string is longer than 64 bytes, the SHA-256 digest of the UTF-8 encoded string is used instead.
 * Message parameters are sent as JSON using the field names as defined in this document.
 
 # <a name="specification"> Specification
@@ -137,5 +140,31 @@ calls with the same [id] and [hashed_id].
 * **Error D**: The server aborts the connection.
 
 # <a name="implementation"> Implementation considerations
+Some points to consider when implementing this protocol are:
+
+* `client_salt` should not be known by the server or potential attackers.
+* `server_id_salt` and `server_password_salt` should be two different values.
+* `H_client` and `H_server` should be secure hash functions, for example Scrypt or Argon2.
 
 # <a name="testvectors"> Test vectors
+This section lists some test vectors for this protocol.
+
+### <a name="testvectors-1"> Test vector 1
+Parameters:
+* `H_client(msg,salt) := HMAC(msg,HMAC(salt,"client"))`
+* `H_server(msg,salt) := HMAC(msg,HMAC(salt,"server"))`
+* `id := "user"`
+* `password := "password"`
+* `client_salt := "client_salt"`
+* `server_id_salt := "server_id_salt"`
+* `server_password_salt := "server_password_salt"`
+* `client_nonce := "client_nonce"`
+* `server_nonce := "server_nonce"`
+
+Derived values:
+* `hashed_id = "f342012bfeac5cadb51b6abc2e43eea78ccca38fef489c79af6df4f745f86d50"`
+* `hashed_password = "52bed9a45da1514a8df363e155fba142ff98e748df8c3e308998b3183d72a6c6"`
+* `double_hashed_id = "ec003d5df24596c6b4a9dc120d35656a8f2b7b75f1f47b6f80d81a59f87fd3d4"`
+* `double_hashed_password = "684895f46d22bb595cc7da0ff2b410f355bbb7ce4cdafd68522dd17932a7d847"`
+* `client_signature = "2faf6c24e060e3021c700b5fdbe7df6d4d508088048c8a23a9b028a1b263ce78"`
+* `server_signature = "d7f3726a2ec3721093c9eef5f14e777512e99080b3b0f62c1af56ad1f228edf8"`
