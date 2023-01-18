@@ -23,11 +23,11 @@ This document describes a password-based mutual authentication protocol. It prov
 ### <a name="overview-analysis"> Strengths and limitations
 Strengths:
 * The client never has to share their password with the server.
-* The client authenticates the server before authenticating itself.
+* The client authenticates the server before the server authenticates the client.
 
 Limitations:
 * The client sends a hash of their password to the server during registration.
-* The client sends a hash of their id to the server during registration.
+* The client sends a hash of their id to the server during registration an authentication.
 
 Possible attacks:
 * With knowledge of the client id, client-side hash function and the client-side hash of the client id, one can perform an attack, for example a brute-force or dictionary attack, to figure out the client salt. Knowing the client salt enables attacks on the hashed password if that is known. This weakness exists because only the salt is then unknown, and this poses a threat since the same salt is used for both the client id and password. A strong hash function combined with a strong salt makes this attack infeasible.
