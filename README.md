@@ -99,8 +99,8 @@ There are a number of functions and values used in this protocol. These are defi
 * `hashed_password := H_client(password,HMAC(client_salt,"password salt"))`
 * `double_hashed_id := H_server(hashed_id,server_id_salt)`
 * `double_hashed_password := H_server(hashed_password,server_password_salt)`
-* `client_signature := HMAC(HMAC(double_hashed_password,client_nonce),server_nonce)`
-* `server_signature := HMAC(HMAC(double_hashed_password,server_nonce),client_nonce)`
+* `client_signature := HMAC(HMAC(double_hashed_password,"client"+client_nonce),"server"+server_nonce)`
+* `server_signature := HMAC(HMAC(double_hashed_password,"server"+server_nonce),"client"+client_nonce)`
 
 ### Data formats:
 * All byte string values are encoded as hexadecimal strings. Text string values are first encoded in UTF-8.
