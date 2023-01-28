@@ -27,11 +27,11 @@ Strengths:
 
 Limitations:
 * The client sends a hash of their password to the server during registration.
-* The client sends a hash of their id to the server during registration an authentication.
+* The client sends a hash of their id to the server during registration and authentication.
 
 Possible attacks:
-* With knowledge of the client id, client-side hash function and the client-side hash of the client id, one can perform an attack, for example a brute-force or dictionary attack, to figure out the client salt. Knowing the client salt enables attacks on the hashed password if that is known. This weakness exists because only the salt is then unknown, and this poses a threat since the same salt is used for both the client id and password. A strong hash function combined with a strong salt makes this attack infeasible.
-* With knowledge of the the client-side hash of the client id, one can get the server salt by impersonating the client to the server. This poses a threat in the case of a database breach, in which case the server-side hash of a client password could be revealed to an attacker. An attacker could then perform an attack, for example a brute-force or dictionary attack, to figure out the client-side hash of the password. If an attacker also gains knowledge of the client salt then this would enable an attack on the password hash.
+* With knowledge of the client id and the client-side hash of the client id, one can perform an attack, for example a brute-force or dictionary attack, to figure out the client salt. Knowing the client salt enables attacks on the hashed password if that is known. This weakness exists because only the salt is then unknown, and this poses a threat since the same salt is used for both the client id and password. A strong client-side hash function combined with a strong client salt makes this attack infeasible.
+* With knowledge of the the client-side hash of the client id, one can get the server salt by impersonating the client to the server. This poses a threat since it enables an attacker to perform a precomputation attack. In the case of a database breach, the server-side hash of a client password could be revealed to the attacker. The attacker could then utilise the precomputed data to figure out the client-side hash of the password. A strong server-side hash function combined with a strong password makes this attack infeasible.
 
 # <a name="outline"> Protocol outline
 This section provides a rough outline of how this protocol functions. The sections
