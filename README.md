@@ -92,7 +92,7 @@ There are a number of functions and values used in this protocol. These are defi
 ### Derived values:
 * `client_key := H_client(password,HMAC(client_salt,"client_key"))`
 * <code>short_client_key := HMAC(client_key,id) % 2<sup>20</sup></code>
-* <code>short_client_signature := HMAC(short_client_key,"client"+client_nonce+"timestamp"+client_timestamp) % 2<sup>20</sup></code>
+* <code>short_client_signature := HMAC(short_client_key,"client"+client_nonce+"timestamp"+client_timestamp)</code>
 * `server_key := H_server(client_key,server_salt)`
 * `client_signature := HMAC(server_key,"client"+client_nonce+"server"+server_nonce)`
 * `server_signature := HMAC(server_key,"server"+server_nonce+"client"+client_nonce)`
