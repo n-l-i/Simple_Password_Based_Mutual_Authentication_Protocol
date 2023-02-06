@@ -53,11 +53,9 @@ Depiction of the information flow:
 The authentication step consists of three messages: a request from the client, a response from the server that establishes mutual
 challenges and provides the server response to this challenge, and lastly a response to this challenge from the client.
 
-* The client calculates the hash of their password and generates a challenge nonce. The client then sends their id, hashed password, and the nonce to the server.
-* The server generates a challenge nonce and calculates its response to the mutual challenge. The server then sends the nonce, its challenge response,
-and the server side hashing parameters to the client.
-* The client calculates the server side hash of the password and uses it to calculate its response to the mutual challenge. The client then sends its
-challenge response to the server.
+* The client calculates the hash of their password and generates a challenge nonce. The client calculates a truncated signature of their password hash. The client then sends their id, truncated signature, and the nonce to the server.
+* The server generates a challenge nonce and calculates its response to the mutual challenge. The server then sends the nonce, its challenge response, and the server side hashing parameters to the client.
+* The client calculates the server side hash of the password and uses it to calculate its response to the mutual challenge. The client then sends its challenge response to the server.
 
 When the server challenge response has been received by the client, they make sure that it matches the expected value. If it does, the server is authenticated. The server authenticates the client in the same way when it receives the client challenge response.
 
