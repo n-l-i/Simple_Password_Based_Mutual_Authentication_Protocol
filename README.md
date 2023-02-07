@@ -27,9 +27,12 @@ Strengths:
 Limitations:
 * The client sends a hash of their password to the server during registration.
 * The client sends a truncated hash of their password to the server during authentication.
+* The server sends a hash of the password to any client providing the correct truncated hash.
 
 Possible attacks:
-* .
+1. A malicious server would during registration receive a hash of the password. Using this value, one could perform a dictionary or brute-force attack to try and find the original password. A strong password in combination with a strong client-side hash function makes this attack infeasible.
+2. A malicious server would during authentication receive a truncated hash of the password. This value enables the same types of attacks as in point number 1, except that the attacker could only hope to narrow down the list of possible passwords and would not be able to figure out the correct password from this value alone.
+3. A malicious client could guess the correct truncated hash and would then receive a hash of the password. The chance of correctly guessing the correct truncated hash value is one in 2^20, which is roughly one in a million. Correctly guessing this value and receiving a server-side hash of the password enables the same types of attacks as in point number 1, except that the server-side hash function has also been used to produce the value which slows down the attacker further.
 
 # <a name="outline"> Protocol outline
 This section provides a rough outline of how this protocol functions. The sections
